@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+
+<body>
+    <style>
+        :root {
+            --split-text-index: 2;
+            --split-text-last-index: 2;
+            --lqd-tr-width: 401.203px;
+            --lqd-tr-enter-duration: 0.65s;
+            --lqd-tr-leave-duration: 0.65s;
+            --lqd-tr-enter-x: -30px;
+            --lqd-tr-enter-y: 0px;
+            --lqd-tr-enter-z: 0px;
+            --lqd-tr-enter-scale: 1.2;
+            --lqd-tr-enter-skewX: 0deg;
+            --lqd-tr-enter-skewY: 0deg;
+            --lqd-tr-enter-rotateX: 0deg;
+            --lqd-tr-enter-rotateY: 0deg;
+            --lqd-tr-enter-rotateZ: 0deg;
+            --lqd-tr-enter-opacity: 0;
+            --lqd-tr-enter-blur: 10px;
+            --lqd-tr-leave-x: 30px;
+            --lqd-tr-leave-y: 0px;
+            --lqd-tr-leave-z: 0px;
+            --lqd-tr-leave-scale: 1.2;
+            --lqd-tr-leave-skewX: 0deg;
+            --lqd-tr-leave-skewY: 0deg;
+            --lqd-tr-leave-rotateX: 0deg;
+            --lqd-tr-leave-rotateY: 0deg;
+            --lqd-tr-leave-rotateZ: 0deg;
+            --lqd-tr-leave-opacity: 0;
+            --lqd-tr-leave-blur: 10px;
+        }
+
+
+        .rotateItemsParent {
+            perspective: 800px;
+            /* width: var(--lqd-tr-width); */
+            transition: all 0.65s cubic-bezier(0.23, 1, 0.320, 1);
+            display: inline-grid;
+        }
+
+        .rotateItem {
+            opacity: 0;
+            background: linear-gradient(90deg, #f1776f 0%, #dbc28a 50%, #54c0bd 100%);
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-fill-color: transparent !important;
+            grid-area: 1 / 1;
+            width: fit-content;
+            display: flex;
+            position: relative;
+            font-size: 80px;
+            /* width: 0; */
+            transform-origin: center;
+        }
+
+        .rotateItem.was-active {
+            --lqd-transition-duration: 0.65s;
+            animation: lqd-text-rotator-leave 0.65s cubic-bezier(0.23, 1, 0.320, 1) forwards;
+        }
+
+        .rotateItem.is-active {
+            --lqd-transition-duration: 0.65s;
+            z-index: 2;
+            animation: lqd-text-rotator-enter 0.65s cubic-bezier(0.23, 1, 0.320, 1) forwards;
+            /* width: fit-content; */
+        }
+        .parentELemnt{
+            display: flex;
+            font-size: 80px;
+            color: #000;
+            margin: 0;
+            line-height: 1;
+        }
+
+        @keyframes lqd-text-rotator-enter {
+            0% {
+                transform: translate3d(-30px, 0, 0) scale(1.2, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+                opacity: var(0, 0);
+                filter: blur(var(10px, 10px))
+            }
+
+            to {
+                transform: translate3d(0, 0, 0) scale(1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);
+                opacity: 1;
+                filter: blur(0)
+            }
+        }
+
+        @keyframes lqd-text-rotator-leave {
+            0% {
+                transform: translate3d(0, 0, 0) scale(1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);
+                opacity: 1;
+                filter: blur(0)
+            }
+
+            to {
+                transform: translate3d(30px, 0, 0) scale(1.2 , 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0, 0);
+                opacity: 0;
+                filter: blur(10px)
+            }
+        }
+    </style>
+
+    <div class="parentELemnt">
+        <h1 class="rotateItemsParent">
+            <span class="rotateItem is-active">First</span>
+            <span class="rotateItem">Second</span>
+            <span class="rotateItem">Third</span>
+        </h1>
+        <p>Txt is gorrd</p>
+    </div>
+
+    <script>
+        const parent = document.querySelector('.rotateItemsParent');
+        const textRotatorItems = document.querySelectorAll('.rotateItem');
+        const activeItemWidth = document.querySelector('.rotateItem.is-active');
+
+        // add width 
+        parent.style.width = activeItemWidth.offsetWidth + 'px';
+       
+
+        // Function to toggle classes
+        function toggleClasses() {
+           
+            const activeItem = document.querySelector('.rotateItem.is-active');
+            
+            
+            if (activeItem) {
+                const previousItem = document.querySelector('.rotateItem.was-active');
+                
+                if(previousItem) {
+                    previousItem.classList.remove('was-active');
+                }
+                // Remove is-active class from the current item
+                activeItem.classList.remove('is-active');
+                // Add was-active class to the current item
+                activeItem.classList.add('was-active');
+            }
+
+
+            const textRotatorItems = document.querySelectorAll('.rotateItem');
+            const activeIndex = Array.from(textRotatorItems).indexOf(activeItem);
+            const nextIndex = (activeIndex + 1) % textRotatorItems.length;
+            // Add is-active class to the next item
+            textRotatorItems[nextIndex].classList.add('is-active');
+            parent.style.width = textRotatorItems[nextIndex].offsetWidth + 'px';
+
+        }
+
+        setInterval(toggleClasses, 3000);
+        
+    </script>
+</body>
+
+
+</html>
