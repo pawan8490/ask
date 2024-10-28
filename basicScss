@@ -1,0 +1,148 @@
+body{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+
+// number data type
+
+.numbers{
+    font-weight: 400;
+    line-height: 1.5;
+    font-size: 20px;
+}
+
+// strings
+
+.strings{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-style: italic;
+}
+
+//  colors
+
+.colors{
+    color: red;
+}
+
+// lists
+
+.lists{
+    margin: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 1px solid red;
+}
+
+// maps
+
+$colors:(
+    primary:red,
+    "secondary" : rgb(20, 129, 20),
+    3 : rgb(255, 255, 0)
+);
+
+h1{
+    color: map-get($colors , 3);
+    background-color: map-get($colors , primary );
+}
+
+
+
+// booleans  true false
+
+// null
+
+
+// INTERPOLATION
+
+$b : "border";
+$c : "color";
+
+h1{
+    #{$b}: 1px solid red;
+    box-sizing: #{$b}-box;
+    #{$c}:blue;
+    background-#{$c}: yellow;
+}
+
+
+
+// for loop
+
+$colorsGroup : (
+    1: red,
+    2: green,
+    3: blue, 
+    4: orange
+);
+
+// "through" replace "to" then 4 is not include 
+@for $i  from 1 through 4 {
+    .paragraph-#{$i}{
+        background-#{$c}: map-get($colorsGroup, $i );
+    }
+}
+
+
+@for $p from 1 through 5{
+    .p-#{$p}{
+        padding: #{$p*4}px;
+    }
+    .py-#{$p}{
+        padding-top: #{$p*4}px ;
+        padding-bottom: #{$p*4}px ;
+    }
+    .px-#{$p}{
+        padding-left: #{$p*4}px;
+        padding-right: #{$p*4}px;
+    }
+    .pt-#{$p}{
+        padding-top: #{$p*4}px;
+    }
+    .pb-#{$p}{
+        padding-bottom: #{$p*4}px;
+    }
+    .pr-#{$p}{
+        padding-right: #{$p*4}px;
+    }
+    .pl-#{$p}{
+        padding-left: #{$p*4}px;
+    }
+    
+}
+
+//  each loop
+
+$bgColors :   orange pink blue red;
+
+@each $bgcolor in $bgColors{
+    .paragraphNew-#{$bgcolor}{
+        background:$bgcolor;
+    }
+}
+
+// if directiove
+
+// h2{
+//     @if(2 < 4){
+//         color:red;
+//     }
+// }
+
+
+@mixin headingSize($size){
+    @if($size == large){
+        font-size:45px;
+    }@else if($size == medium){
+        font-size: 30px;
+    }@else{
+        font-size:15px;
+    }
+}
+
+
+h2{
+    @include headingSize(large)
+}
