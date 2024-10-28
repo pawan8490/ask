@@ -1,0 +1,359 @@
+//function
+
+@function sum($left , $right){
+    @return $left + $right;
+}
+
+@function em($pixels, $content : 16px){
+    @return calc($pixels / $content) * 1em;
+}
+
+$gapSpace:30;
+
+@function col-width($column: 12 , $page-width:100% , $gap: $gapSpace/100){
+    @return ($page-width - ($gap*($column -  1)) ) / $column;
+}
+
+
+@function strip-unit($value){
+    @return $value / ($value*0 + 1);
+}
+
+
+//mixins
+
+
+@mixin blue-beans{
+    @if $brand == blue-beans{
+        @content;
+    }
+}
+@mixin rogers-rovers{
+    @if $brand == rogers-rovers{
+        @content;
+    }
+}
+@mixin pastry-pizza{
+    @if $brand == pastry-pizza{
+        @content;
+    }
+}
+
+
+@mixin darkTheme {
+    @if $theme == dark{
+        @content;
+    }
+}
+
+@mixin google-font($font){
+    $font : unquote($font);
+    @import url(https://fonts.googleapis.com/css?family=#{$font});
+}
+
+@mixin warning {
+    background-color:orange;
+    color:#fff;
+    &:hover{
+        background-color: lighten(orange, 15%);
+    }
+}
+
+
+
+
+
+
+@mixin tiny-screen(){
+    @media only screen and (max-width:320px) {
+        @content;
+    }
+}
+@mixin small-screen(){
+    @media only screen and (max-width:480px) {
+        @content;
+    }
+}
+@mixin medium-screen(){
+    @media only screen and (max-width:680px) {
+        @content;
+    }
+}
+@mixin large-screen(){
+    @media only screen and (max-width:960px) {
+        @content;
+    }
+}
+
+@mixin large-text{
+    font-size: 22px;
+    font-weight: 700;
+}
+@mixin box-shadow($shadow...){
+    box-shadow: $shadow;
+    -moz-box-shadow: $shadow;
+    -webkit-box-shadow:$shadow;
+}
+
+
+@mixin rounded($radius:6px){
+    border-radius: $radius;
+}
+
+
+
+@mixin box($radius: 6px , $border: 1px solid #000){
+    @include rounded($radius);
+    border: $border;
+}
+
+@mixin fancy-links{
+    a{
+        font-style: italic;
+        text-decoration: none;
+    }
+}
+
+@mixin apply-to-ie-6{
+    * html{
+        @content;
+    }
+}
+
+//variabls
+
+$theme : default;
+
+//
+
+$brand : blue-beans;
+
+
+// color section
+$text-color: #222222;
+$theme-color:#170a48;
+$secondary-color:#f27731;
+$ternary-color:#ccf962;
+$link-color:$secondary-color;
+$menu-item-color:#fff;
+$body-background-color:#fff;
+
+
+@if $theme == dark{
+    $text-color: #fff;
+    $body-background-color:#22222a;
+    $theme-color:#42424a;
+    $secondary-color:#c24721;
+    $ternary-color:#698932;
+    $link-color:$secondary-color;
+    $menu-item-color:#fff;
+}@else if $theme == light{
+    $text-color: #000;
+    $body-background-color:#fff;
+    $theme-color:#372a27;
+    $secondary-color:#d26741;
+    $ternary-color:#b9da63;
+    $link-color:$secondary-color;
+    $menu-item-color:#fff;
+}
+
+// font section 
+$text-font: "Alegreya Sans" , Arial , sans-serif;
+$headline-font: 'Titillium Web' , Georgia , serif;
+
+
+// sizes section
+$content-width:960px;
+$footer-height:90px;
+$header-height : 60px;
+
+
+$col : col-width($column: 12);
+$gapSpace: 15;
+
+// mains
+
+@import 'partials/functions';
+@import 'partials/variable';
+@import 'partials/mixins';
+
+
+// import method
+// @import url();
+// @import "http://";
+// @import "filename.css";
+// @import "style-screen" screen ;
+
+
+// through inclue 6 col
+@for $i from 1 to 6 {
+    .col-#{$i}{
+        width: $i * 2em;
+    }
+}
+
+$speakers : bob-banker , patty-plume, sandra-smith;
+@each $speaker in $speakers{
+    .#{$speaker}-profile{
+        background-image: url('/img/#{$speaker}.png')
+    }
+}
+
+$font-sizes: (tiny:8px, small:11px, medium:13px, large:18px);
+@each $name, $size in $font-sizes{
+    .#{$name}{
+        font-size: $size;
+    }
+}
+
+$j : 2 ;
+@while $j <= 8 {
+    .picture-#{$j}{
+        width: $j*10%;
+    }
+    $j: $j + 2
+}
+
+@include google-font("Alegreya+Sans");
+@include google-font("Titllium+Web");
+
+
+// $contrast : low;
+body {
+    font-family: $text-font;
+    // @if $contrast == high{
+    //     color:#000;
+    // }@else if $contrast == low{
+    //     color:#999;
+    // }@else{
+    //     color:$text-color;
+    // }
+    color: $text-color;
+    background:$body-background-color;
+    font-size: em(18px);
+    @include large-screen{
+        font-size: 125%;
+    }
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: $headline-font;
+}
+h2{
+    @include large-text;
+}
+
+p {
+    font-family: $text-font;
+}
+
+a{
+    color:$link-color;
+    @include blue-beans{
+        color:#8779ff;
+    }
+    &:hover{
+        color:darken($link-color , 15%)
+    }
+}
+
+.warning-button{
+    @include warning;
+    padding: 8px 12px;
+}
+
+
+
+@include fancy-links;
+
+#header {
+    height: $header-height;
+    background:$theme-color;
+    @include box(15px , 1px solid #999);
+    @include box-shadow(2px 0px 4px #999 , 1px 1px 6px $secondary-color);
+    #main-menu {
+        li{
+            display: inline-block;
+        }
+        a{
+            color:$menu-item-color;
+            padding: 6px 8px;
+            border-bottom: 1px solid transparentize(#fefefe, 1);
+            transition: all 1s ease-in-out;
+            &:hover{
+                border-bottom: 1px solid opacify(#fefefe , .5);
+            }
+        }
+    }
+
+    
+}
+
+#main {
+    width: $content-width;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: space-between;
+    #content {
+        display: inline-block;
+        width:$col*9;
+    }
+
+    #sidebar {
+        display: inline-block;
+        width:$col*3;
+        ul{
+            padding-left: 0;
+        }
+        li{
+            list-style-type: none;
+            padding:em(16px) em(20px);
+            border-bottom: 1px dashed #999;
+            &:hover{
+                background-color: #efefef;
+                @include darkTheme{
+                    color:$body-background-color;
+                }
+            }
+        }
+    }
+}
+
+#footer {
+    height: $footer-height;
+    background-color: $ternary-color;
+
+    @include rogers-rovers{
+         border-top: 5px solid darken($ternary-color , 15%);
+    }
+}
+
+@include apply-to-ie-6{
+    body{
+        font-size: 125%;
+    }
+}
+
+
+.error{
+    color:red;
+}
+.critical-error{
+    @extend .error;
+    border-bottom: 1px solid red;
+    font-weight: bold;
+}
+
+.cta-button{
+    @extend .warning-button;
+    @include rounded;
+    font-weight: bold;
+}
+.super-cta-button{
+    @extend .cta-button;
+    font-size: em(18px);
+}
