@@ -1,0 +1,265 @@
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "../button";
+import { arrowRight, userIcon } from "../../../public/assets/svg";
+
+const OnBoardingSlider = ({ schema }) => {
+  const [number, setNumber] = useState(0);
+  // slider effect
+  const [slideOffsets, setSlideOffsets] = useState([]);
+  const slideRefs = useRef([]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const getScrollLeftOffset = (index) => {
+    if (slideRefs.current[index]) {
+      const offsetLeft = slideRefs.current[index].offsetLeft;
+      return offsetLeft;
+    }
+    return 0;
+  };
+
+  const handlePrevSlide = () => {
+    if (number != 0) {
+      setNumber((pre) => pre - 1);
+    }
+  };
+
+  const handleNextSlide = () => {
+    if (number !== 8) {
+      setNumber((pre) => pre + 1);
+    } else {
+      setNumber(0);
+    }
+  };
+  const sliders = schema?.sliderContent;
+
+  useEffect(() => {
+    const offsets = [];
+    for (let i = 0; i < slideRefs.current.length; i++) {
+      const offset = getScrollLeftOffset(i);
+      offsets.push(offset);
+    }
+    setSlideOffsets(offsets);
+  }, []);
+
+    // auto slide 
+    const changeSlide = (index) => {
+      setNumber(index);
+    };
+    // Function to handle automatic slide change after fixed time
+    const autoChangeSlide = () => {
+      const newIndex = (number + 1) % sliders.length; // Calculate the next index
+      changeSlide(newIndex); // Change the slide
+    };
+
+    useEffect(() => {
+      if (!isHovered) {
+        // Set an interval to automatically change the slide every 5 seconds (adjust time as needed)
+        const intervalId = setInterval(autoChangeSlide, 5000);
+  
+        return () => {
+          // Clear the interval to prevent memory leaks
+          clearInterval(intervalId);
+        };
+      }
+    }, [number , isHovered]);
+
+
+    const handleMouseEnter = () => {
+      setIsHovered(true);
+      console.log("stop")
+    };
+  
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+      console.log("start")
+    };
+
+  // change text effect
+
+  useEffect(() =>{
+        const parent = document.querySelector('.rotateItemsParent');
+        const textRotatorItems = document.querySelectorAll('.rotateItem');
+        const activeItemWidth = document.querySelector('.rotateItem.is-active');
+
+         // add width 
+         parent.style.width = activeItemWidth.offsetWidth + 'px';
+
+        function toggleClasses() {
+           
+            const activeItem = document.querySelector('.rotateItem.is-active');
+            
+            
+            if (activeItem) {
+                const previousItem = document.querySelector('.rotateItem.was-active');
+                
+                if(previousItem) {
+                    previousItem.classList.remove('was-active');
+                }
+                // Remove is-active class from the current item
+                activeItem.classList.remove('is-active');
+                // Add was-active class to the current item
+                activeItem.classList.add('was-active');
+            }
+
+
+            const textRotatorItems = document.querySelectorAll('.rotateItem');
+            const activeIndex = Array.from(textRotatorItems).indexOf(activeItem);
+            const nextIndex = (activeIndex + 1) % textRotatorItems.length;
+            // Add is-active class to the next item
+            textRotatorItems[nextIndex].classList.add('is-active');
+            parent.style.width = textRotatorItems[nextIndex].offsetWidth + 'px';
+
+        }
+        const interval = setInterval(toggleClasses, 4000);
+        
+        return () => clearInterval(interval);
+  }, [])
+
+  return (
+    <div className="solutionHome gapY">
+      <div className="container overCtn">
+        <div className="absoluteContent">
+          <h2>{schema?.heading}</h2>
+          {/* <p>{schema?.title}</p> */}
+          
+          <div className="rotataingFlex">
+            <h3 class="rotateItemsParent">
+                <span class="rotateItem is-active">technology</span>
+                <span class="rotateItem">interface</span>
+                <span class="rotateItem">efficiency</span>
+            </h3>
+            <h2>trends</h2>
+          </div>
+        </div>
+
+        <div className="sliderParentRow" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          {sliders?.map((slide,i)=>{
+            return (
+              <div className={`row  slider_prev ${number==i && 'slider_current'}`}  key={i} 
+              ref={(el) => (slideRefs.current[i] = el)}
+              style={{ transform: `translate3d(-${slideOffsets[i]}px, 0, 0)` }}>
+                <div className="col-md-6 col-12 d-flex justify-content-center align-items-center ">
+                  <div>
+                    <div className="ctnLeftSoll">
+                      <h3>{slide?.heading}</h3>
+                      <p>{slide?.content}</p>
+                      <div className="actionOnboard">
+                        <Button
+                          text={slide?.buttonName}
+                          className="btn-primary"
+                          icon={userIcon}
+                        />
+                        <Button
+                          text={slide?.secondButtonName}
+                          className="btn-light"
+                          iconRight={arrowRight}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-12">
+                  <div className="portfoliImageRight">
+                    <Image
+                      src={slide?.img}
+                      alt="Logo"
+                      width={400}
+                      height={400}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="sliderbtmArrow">
+          <Image
+            src="/assets/solution/single-sign-on-solution/backwardArrow.svg"
+            alt=""
+            width={50}
+            height={50}
+            onClick={handlePrevSlide}
+          />
+          <Image
+            src="/assets/solution/single-sign-on-solution/forwardArrow.svg"
+            alt=""
+            width={50}
+            height={50}
+            onClick={handleNextSlide}
+          />
+        </div>
+
+      </div>
+      <div className="solutionHomeLayer">
+        <Image
+          src="/assets/static/layerbtom.svg"
+          alt=""
+          width={1920}
+          height={814}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default OnBoardingSlider;
+
+//css
+
+.running-text {
+    height: 75px;
+    overflow: hidden;
+    > span {
+      font-size: 60px;
+      font-weight: 700;
+      line-height: 75px;
+      display: block;
+      animation: change 12s infinite;
+      transform: translate3d(0,0,0);
+      background: linear-gradient(90deg, #FFA800 0%, #20B8E8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  @keyframes change {
+    0%, 13%, 100% {transform:translate3d(0,0,0);}
+    18%, 28% {transform:translate3d(0,-97%,0);}
+    35%,46% {transform:translate3d(0,-200%,0);}
+    50%,65% {transform:translate3d(0,-97%,0);}
+    72%, 100% {transform:translate3d(0,0,0);}
+  }
+
+
+  .sliderParentRow{
+    position: relative;
+    display: flex;
+    overflow: hidden;
+  }
+  .slider_prev{
+    transition: all .3s ease-in-out;
+    min-width: 100%;
+    visibility: hidden;
+    opacity: 0;
+    .portfoliImageRight{
+      img{
+        scale:  .5;
+        transition: all .5s ease-in-out;
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+  .slider_current{
+    transition: all .3s ease-in-out;
+    visibility: visible;
+    opacity: 1;
+    .portfoliImageRight{
+      img{
+        opacity: 1;
+        visibility: visible;
+        scale: 1 1;
+      }
+    }
+    
+  }
