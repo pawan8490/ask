@@ -1,0 +1,98 @@
+import { useRef } from 'react';
+import data from './HomeSectionFourData';
+import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
+import Image from 'next/image';
+import { limitString } from '@/utils/utilityFunction/limitString';
+import newsData from '@/components/News/sectionOneData';
+import { useRouter } from 'next/router';
+import { getCookie } from '@/utils/cookie-manager/cookie';
+import newsDataEn from '@/components/News/sectionOneData';
+import newsDataHn from '@/components/News/SectionOneDataHn';
+const HomeSectionFour = () => {
+	const { t } = useTranslation();
+	const lng = getCookie('lng');
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	const scrollLeft = () => {
+		if (containerRef.current) {
+			containerRef.current.scrollLeft -= containerRef?.current.offsetWidth;
+		}
+	};
+
+	const scrollRight = () => {
+		if (containerRef.current) {
+			containerRef.current.scrollLeft += containerRef.current.offsetWidth;
+		}
+	};
+	const router = useRouter();
+
+	return (
+		<div className="container">
+			<div className="homeSectionThreeHeading">
+				<div>
+					<h3>{t('article_heading')}</h3>
+					<p className="subheading">{t('article_subheading')}</p>
+				</div>
+			</div>
+
+			<div className="row homeSectionThreeTypeDiv">
+				<p>{t('Latest News')}</p>
+				<Link href="/news-&-media">{t('View More')}</Link>
+			</div>
+
+			<div className="homeSectionFourContainers">
+				<div className="col-12">
+					<div className="homeCarouselTrending">
+						<button className="homeTrendingPrev" onClick={scrollLeft}></button>
+						<div className="homeCarouselContainer" ref={containerRef}>
+							{(lng && lng === 'en' ? newsDataEn : newsDataHn)?.map((item, index) => (
+								<div className="col-4" key={index} onClick={() => router.push(`/news-&-media/${item?.slugUrl}`)}>
+									<div className="row">
+										<div className="card">
+											<div className="newsCardPhotoNew">
+												<Image src={item?.image} width="380" height="213" alt="cardPhoto" className="newsPhotoNew" />
+											</div>
+											<div className="col-12 newsCardTitleNew">{t(limitString(item?.title, 40))}</div>
+											<div className="shortdescription">{limitString(t(item?.shortdescription), 100)}</div>
+											<div className="date">{t(item?.date)}</div>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+						<button className="homeTrendingNext" onClick={scrollRight}></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default HomeSectionFour;
+
+//css
+
+.homeCarouselContainer {
+  // display: flex;
+  // gap: 1rem;
+  // width: 100%;
+  // overflow: hidden;
+  // scroll-behavior: smooth;
+  display: flex;
+    width: 100%;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    .col-4 {
+      max-width: 32%;
+      margin-right:2%;
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+    }
+  .card {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
